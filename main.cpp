@@ -16,13 +16,21 @@ int yJoystickOne = 0;
 int xJoystickTwo = 0;
 int yJoystickTwo = 0;
 
+// M5 screen Max values
+
+int screenMaxX = 320;
+int screenMaxY = 240;
+
 // Rectangles coordonates
 
-int xRectOne = 100;
-int yRectOne = 100;
+int playerBarWidth = 70;
+int playerBarHeight = 15;
 
-int xRectTwo = 200;
-int yRectTwo = 200;
+int xRectOne = screenMaxX / 2 - playerBarWidth;
+int yRectOne = 10;
+
+int xRectTwo = screenMaxX / 2 - playerBarWidth;
+int yRectTwo = screenMaxY - 10 - playerBarHeight;
 
 void setup()
 {
@@ -40,72 +48,48 @@ void setup()
 
 void clearSquares(int xRectOne, int yRectOne, int xRectTwo, int yRectTwo)
 {
-  M5.Lcd.fillRect(xRectOne, yRectOne, 50, 50, 0);
-  M5.Lcd.fillRect(xRectTwo, yRectTwo, 50, 50, 0);
+  M5.Lcd.fillRect(xRectOne, yRectOne, playerBarWidth, playerBarHeight, 0);
+  M5.Lcd.fillRect(xRectTwo, yRectTwo, playerBarWidth, playerBarHeight, 0);
 }
 
-void moveRectangles(int yJoystickOne, int xJoystickOne, int yJoystickTwo, int xJoystickTwo, int xRectOne, int yRectOne, int xRectTwo, int yRectTwo)
+void moveRectangles(int xJoystickOne, int xJoystickTwo, int xRectOne, int yRectOne, int xRectTwo, int yRectTwo, int* xRectOnePointer, int* xRectTwoPointer)
 {
-  if (yJoystickOne > 10 && yRectOne <= 350)
+  if (xJoystickOne > 10 && xRectOne <= screenMaxX - playerBarWidth)
   {
     clearSquares(xRectOne, yRectOne, xRectTwo, yRectTwo);
-    yRectOne++;
-  }
-  if (yJoystickOne < -10 && yRectOne >= 0)
-  {
-    clearSquares(xRectOne, yRectOne, xRectTwo, yRectTwo);
-    yRectOne--;
-  }
-  if (xJoystickOne > 10 && xRectOne <= 350)
-  {
-    clearSquares(xRectOne, yRectOne, xRectTwo, yRectTwo);
-    xRectOne++;
+    *xRectOnePointer = *xRectOnePointer + 5;
   }
   if (xJoystickOne < -10 && xRectOne >= 0)
   {
     clearSquares(xRectOne, yRectOne, xRectTwo, yRectTwo);
-    xRectOne--;
+    *xRectOnePointer = *xRectOnePointer - 5;
   }
 
-  if (yJoystickTwo > 10 && yRectOne <= 350)
+  if (xJoystickTwo > 10 && xRectTwo <= screenMaxX - playerBarWidth)
   {
     clearSquares(xRectOne, yRectOne, xRectTwo, yRectTwo);
-    yRectTwo++;
-  }
-  if (yJoystickTwo < -10 && yRectTwo >= 0)
-  {
-    clearSquares(xRectOne, yRectOne, xRectTwo, yRectTwo);
-    yRectTwo--;
-  }
-  if (xJoystickTwo > 10 && xRectOne <= 350)
-  {
-    clearSquares(xRectOne, yRectOne, xRectTwo, yRectTwo);
-    xRectTwo++;
+    *xRectTwoPointer = *xRectTwoPointer + 5;
   }
   if (xJoystickTwo < -10 && xRectTwo >= 0)
   {
     clearSquares(xRectOne, yRectOne, xRectTwo, yRectTwo);
-    xRectTwo--;
+    *xRectTwoPointer = *xRectTwoPointer - 5;
   }
 }
 
 void loop()
 {
-  int valOne = analogRead(vryOne);
-  yJoystickOne = map(valOne, 0, 4096, 50, -50);
-  valOne = analogRead(vrxOne);
+  int valOne = analogRead(vrxOne);
   xJoystickOne = map(valOne, 0, 4096, 50, -50);
 
-  int valTwo = analogRead(vryTwo);
-  yJoystickTwo = map(valTwo, 0, 4096, 50, -50);
-  valTwo = analogRead(vrxTwo);
+  int valTwo = analogRead(vrxTwo);
   xJoystickTwo = map(valTwo, 0, 4096, 50, -50);
 
-  moveRectangles(yJoystickOne, xJoystickOne, yJoystickTwo, xJoystickTwo, xRectOne, yRectOne, xRectTwo, xRectTwo);
+  moveRectangles(xJoystickOne, xJoystickTwo, xRectOne, yRectOne, xRectTwo, yRectTwo, &xRectOne, &xRectTwo);
 
   M5.Lcd.clear(BLACK);
-  M5.Lcd.fillRect(xRectOne, yRectOne, 50, 50, 30465);
-  M5.Lcd.fillRect(xRectTwo, yRectTwo, 50, 50, 50000);
+  M5.Lcd.fillRect(xRectOne, yRectOne, playerBarWidth, playerBarHeight, 30465);
+  M5.Lcd.fillRect(xRectTwo, yRectTwo, playerBarWidth, playerBarHeight, 50000);
   M5.Lcd.setCursor(0, 0);
   delay(25);
 }
