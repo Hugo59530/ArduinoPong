@@ -32,6 +32,14 @@ int yRectOne = 10;
 int xRectTwo = screenMaxX / 2 - playerBarWidth;
 int yRectTwo = screenMaxY - 10 - playerBarHeight;
 
+// Ball stuff7
+
+int xBall = screenMaxX / 2;
+int yBall = screenMaxY / 2;
+int ballRadius = 15;
+bool xVector = true;
+bool yVector = true;
+
 void setup()
 {
   M5.begin();       // Init M5Core. Initialize M5Core
@@ -77,6 +85,28 @@ void moveRectangles(int xJoystickOne, int xJoystickTwo, int xRectOne, int yRectO
   }
 }
 
+void moveBall(int xBall, int yBall, int* xBallPointer, int* yBallPointer)
+{
+  if (xBall + ballRadius >= screenMaxX)
+  {
+    xVector = false;
+  }
+  if (xBall <= 0)
+  {
+    xVector = true;
+  }
+  if (yBall + ballRadius >= screenMaxY)
+  {
+    xVector = false;
+  }
+  if (yBall <= 0)
+  {
+    xVector = true;
+  }
+  *xBallPointer = xVector ? *xBallPointer - 1 : *xBallPointer + 1;
+  *yBallPointer = yVector ? *yBallPointer - 1 : *yBallPointer + 1;
+}
+
 void loop()
 {
   int valOne = analogRead(vrxOne);
@@ -86,10 +116,13 @@ void loop()
   xJoystickTwo = map(valTwo, 0, 4096, 50, -50);
 
   moveRectangles(xJoystickOne, xJoystickTwo, xRectOne, yRectOne, xRectTwo, yRectTwo, &xRectOne, &xRectTwo);
+  moveBall(xBall, yBall, &xBall, &yBall);
 
   M5.Lcd.clear(BLACK);
   M5.Lcd.fillRect(xRectOne, yRectOne, playerBarWidth, playerBarHeight, 30465);
   M5.Lcd.fillRect(xRectTwo, yRectTwo, playerBarWidth, playerBarHeight, 50000);
+  m5.Lcd.drawCircle(xBall, yBall, ballRadius, 45000);
+
   M5.Lcd.setCursor(0, 0);
   delay(25);
 }
