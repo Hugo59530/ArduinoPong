@@ -21,7 +21,7 @@ int yJoystickTwo = 0;
 int screenMaxX = 320;
 int screenMaxY = 240;
 
-// Rectangles coordonates
+// Rectangles coordinates
 
 int playerBarWidth = 70;
 int playerBarHeight = 15;
@@ -32,7 +32,7 @@ int yRectOne = 10;
 int xRectTwo = screenMaxX / 2 - playerBarWidth;
 int yRectTwo = screenMaxY - 10 - playerBarHeight;
 
-// Ball stuff7
+// Ball stuff
 
 int xBall = screenMaxX / 2;
 int yBall = screenMaxY / 2;
@@ -42,8 +42,8 @@ bool yVector = true;
 
 void setup()
 {
-  M5.begin();       // Init M5Core. Initialize M5Core
-  M5.Power.begin(); // Init Power module. Initialize the power module
+  M5.begin();       // Init M5Core
+  M5.Power.begin(); // Init Power module
 
   pinMode(msOne, INPUT);
   pinMode(vryOne, INPUT);
@@ -109,9 +109,9 @@ void moveBall(int xBall, int yBall, int* xBallPointer, int* yBallPointer)
 
 void loop()
 {
+  // Read Joystick Values
   int valOne = analogRead(vrxOne);
   xJoystickOne = map(valOne, 0, 4096, 50, -50);
-
   int valTwo = analogRead(vrxTwo);
   xJoystickTwo = map(valTwo, 0, 4096, 50, -50);
 

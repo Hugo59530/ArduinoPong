@@ -5,8 +5,8 @@
 
 ### Working pong
 
-- 2 playable bars
-- Ball
+- ~~2 playable bars~~
+- ~~Ball~~
 - Collisions
 - Continue game on score
 
@@ -23,5 +23,6 @@
 
 ## Used documentation :
 
+- [Setup the lib](https://docs.m5stack.com/en/arduino/arduino_development)
 - [Arduino joystick documentation](https://www.c-sharpcorner.com/article/how-to-connect-arduino-joystick-in-arduino-uno/)
 - [M5 Stack LCD documentation](https://github.com/m5stack/m5-docs/blob/master/docs/en/api/lcd.md) 
