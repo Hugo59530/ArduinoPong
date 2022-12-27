@@ -7,8 +7,8 @@
 
 - ~~2 playable bars~~
 - ~~Ball~~
-- Collisions
-- Continue game on score
+- ~~Collisions~~
+- ~~Continue game on score~~
 
 ### Game management
 
@@ -20,6 +20,10 @@
 
 - Color changes
 - Sounds
+
+## Arduino IDE Setup
+
+**Must use M5Stack-Core-ESP32 for the program to work.**
 
 ## Used documentation :
 
