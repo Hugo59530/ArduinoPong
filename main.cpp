@@ -36,6 +36,7 @@ int yRectTwo = screenMaxY - 10 - playerBarHeight;
 
 int playerOneScore = 0;
 int playerTwoScore = 0;
+int lastWinner = 0;
 
 // Ball stuff
 
@@ -57,7 +58,6 @@ void setup()
   pinMode(msTwo, INPUT);
   pinMode(vryTwo, INPUT);
   pinMode(vrxTwo, INPUT);
-  M5.Lcd.setTextSize(7);
 }
 
 bool score(int player)
@@ -72,7 +72,7 @@ bool score(int player)
     playerTwoScore += 1;
     yVector = true;
   }
-  return true;
+  return false;
 }
 
 void clearSquares(int xRectOne, int yRectOne, int xRectTwo, int yRectTwo)
@@ -126,7 +126,7 @@ bool moveBall(int xBall, int yBall, int* xBallPointer, int* yBallPointer)
   }
   *xBallPointer = xVector ? *xBallPointer + 3 : *xBallPointer - 3;
   *yBallPointer = yVector ? *yBallPointer + 3 : *yBallPointer - 3;
-  return false;
+  return true;
 }
 
 void collisionDetection(int xBall, int yBall, int xRectOne, int yRectOne, int xRectTwo, int yRectTwo) 
@@ -150,41 +150,69 @@ void collisionDetection(int xBall, int yBall, int xRectOne, int yRectOne, int xR
 
 void loop()
 {
-  bool game = false;
-  while (!game) {
-  // Read Joystick Values
-  int valOne = analogRead(vrxOne);
-  xJoystickOne = map(valOne, 0, 4096, 50, -50);
-  int valTwo = analogRead(vrxTwo);
-  xJoystickTwo = map(valTwo, 0, 4096, 50, -50);
-
-  moveRectangles(xJoystickOne, xJoystickTwo, xRectOne, yRectOne, xRectTwo, yRectTwo, &xRectOne, &xRectTwo);
-  collisionDetection(xBall, yBall, xRectOne, yRectOne, xRectTwo, yRectTwo);
-  game = moveBall(xBall, yBall, &xBall, &yBall);
-
-  M5.Lcd.clear(BLACK);
-  M5.Lcd.fillRect(xRectOne, yRectOne, playerBarWidth, playerBarHeight, 30465);
-  M5.Lcd.fillRect(xRectTwo, yRectTwo, playerBarWidth, playerBarHeight, 50000);
-  m5.Lcd.drawCircle(xBall, yBall, ballRadius, ballColor);
-  m5.Lcd.drawNumber(playerOneScore, 10, screenMaxY / 2 - 60);
-  m5.Lcd.drawNumber(playerTwoScore, screenMaxX - 50, screenMaxY / 2 + 30);
-
-  M5.Lcd.setCursor(0, 0);
-  delay(25);
+  bool menu = true;
+  while (menu) {
+    M5.Lcd.clear(BLACK);
+    M5.Lcd.setTextDatum(CC_DATUM);
+    if (lastWinner != 0) {
+      M5.Lcd.setTextSize(2); 
+      M5.Lcd.drawString("Last winner : ", 145, 90, 2);
+      M5.Lcd.setTextSize(3); 
+      M5.Lcd.drawNumber(lastWinner, 255, 90);
+    }
+    M5.Lcd.setTextSize(1); 
+    M5.Lcd.drawString("If you want to start a new 1v1 game,", 160, 120, 2);
+    M5.Lcd.drawString("please press one of the joysticks buttons.", 160, 135, 2);
+    if (!digitalRead(msOne) || !digitalRead(msTwo)) 
+    {
+      menu = false;
+    }
   }
+  bool set = true;
+  while (set) {
+    M5.Lcd.setTextSize(4);
+    bool game = true;
+    while (game) {
+    // Read Joystick Values
+    int valOne = analogRead(vrxOne);
+    xJoystickOne = map(valOne, 0, 4096, 50, -50);
+    int valTwo = analogRead(vrxTwo);
+    xJoystickTwo = map(valTwo, 0, 4096, 50, -50);
 
-  if (playerOneScore >= 5 || playerTwoScore >= 5)
-  {
-    playerOneScore = 0;
-    playerTwoScore = 0;
+    moveRectangles(xJoystickOne, xJoystickTwo, xRectOne, yRectOne, xRectTwo, yRectTwo, &xRectOne, &xRectTwo);
+    collisionDetection(xBall, yBall, xRectOne, yRectOne, xRectTwo, yRectTwo);
+    game = moveBall(xBall, yBall, &xBall, &yBall);
+
+    M5.Lcd.clear(BLACK);
+    M5.Lcd.fillRect(xRectOne, yRectOne, playerBarWidth, playerBarHeight, 30465);
+    M5.Lcd.fillRect(xRectTwo, yRectTwo, playerBarWidth, playerBarHeight, 50000);
+    M5.Lcd.setTextSize(1);
+    M5.Lcd.drawString("Player 1 :", 10, screenMaxY / 2);
+    M5.Lcd.drawString("Player 2 :", screenMaxX - 50, screenMaxY / 2);
+    M5.Lcd.setTextSize(1);
+    M5.Lcd.drawNumber(playerOneScore, 70, screenMaxY / 2);
+    M5.Lcd.drawNumber(playerTwoScore, screenMaxX - 10, screenMaxY / 2);
+    M5.Lcd.drawCircle(xBall, yBall, ballRadius, ballColor);
+
+    M5.Lcd.setCursor(0, 0);
+    delay(25);
+    }
+
+    if (playerOneScore >= 5 || playerTwoScore >= 5)
+    {
+      playerOneScore = 0;
+      playerTwoScore = 0;
+      lastWinner = playerOneScore >= 5 ? 1 : 2;
+      set = false;
+    }
+
+    xRectOne = screenMaxX / 2 - playerBarWidth / 2;
+    yRectOne = 10;
+
+    xRectTwo = screenMaxX / 2 - playerBarWidth / 2;
+    yRectTwo = screenMaxY - 10 - playerBarHeight;
+    
+    xBall = screenMaxX / 2;
+    yBall = screenMaxY / 2;
   }
-
-  xRectOne = screenMaxX / 2 - playerBarWidth / 2;
-  yRectOne = 10;
-
-  xRectTwo = screenMaxX / 2 - playerBarWidth / 2;
-  yRectTwo = screenMaxY - 10 - playerBarHeight;
-  
-  xBall = screenMaxX / 2;
-  yBall = screenMaxY / 2;
 }

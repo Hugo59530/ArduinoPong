@@ -12,14 +12,15 @@
 
 ### Game management
 
-- Points system
-- Set / Lives system
-- Start game / stop game
+- ~~Points system~~
+- ~~Set / Games~~
+- ~~Start game / Starting menu~~
 
 ### Extras
 
 - Color changes
 - Sounds
+- Custom background
 
 ## Arduino IDE Setup
 
