@@ -22,7 +22,27 @@
 - Sounds
 - Custom background
 
-## Arduino IDE Setup
+## Setup
+
+### M5 pins setup :
+
+`Joystick One` 
+  
+**vry** : 26
+
+**vrx** : 25
+
+**ms** : 3
+
+`Joystick Two` 
+  
+**vry** : 36
+
+**vrx** : 35
+
+**ms** : 1
+
+### Arduino IDE Setup :
 
 **Must use M5Stack-Core-ESP32 for the program to work.**
 
