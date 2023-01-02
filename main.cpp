@@ -43,9 +43,15 @@ int lastWinner = 0;
 int xBall = screenMaxX / 2;
 int yBall = screenMaxY / 2;
 int ballRadius = 15;
-int ballColor = 45000; 
+int ballColor = 45000;
+int ballSpeed = 3;
 bool xVector = true;
 bool yVector = true;
+
+// Time management
+
+int t = millis();
+int refreshInterval = 10;
 
 void setup()
 {
@@ -124,8 +130,8 @@ bool moveBall(int xBall, int yBall, int* xBallPointer, int* yBallPointer)
   {
     return score(2);
   }
-  *xBallPointer = xVector ? *xBallPointer + 3 : *xBallPointer - 3;
-  *yBallPointer = yVector ? *yBallPointer + 3 : *yBallPointer - 3;
+  *xBallPointer = xVector ? *xBallPointer + ballSpeed : *xBallPointer - ballSpeed;
+  *yBallPointer = yVector ? *yBallPointer + ballSpeed : *yBallPointer - ballSpeed;
   return true;
 }
 
@@ -136,6 +142,7 @@ void collisionDetection(int xBall, int yBall, int xRectOne, int yRectOne, int xR
     if (xBall + ballRadius >= xRectOne && xBall - ballRadius <= xRectOne + playerBarWidth)
     {
       yVector = !yVector;
+      ballSpeed = ballSpeed == 3 ? 5 : ballSpeed;
     }
   }
 
@@ -144,6 +151,7 @@ void collisionDetection(int xBall, int yBall, int xRectOne, int yRectOne, int xR
     if (xBall + ballRadius >= xRectTwo && xBall - ballRadius <= xRectTwo + playerBarWidth)
     {
       yVector = !yVector;
+      ballSpeed = ballSpeed == 3 ? 5 : ballSpeed;
     }
   }
 }
@@ -173,29 +181,30 @@ void loop()
     M5.Lcd.setTextSize(4);
     bool game = true;
     while (game) {
-    // Read Joystick Values
-    int valOne = analogRead(vrxOne);
-    xJoystickOne = map(valOne, 0, 4096, 50, -50);
-    int valTwo = analogRead(vrxTwo);
-    xJoystickTwo = map(valTwo, 0, 4096, 50, -50);
+      if (millis() - t > refreshInterval)
+      {
+        // Read Joystick Values
+        int valOne = analogRead(vrxOne);
+        xJoystickOne = map(valOne, 0, 4096, 50, -50);
+        int valTwo = analogRead(vrxTwo);
+        xJoystickTwo = map(valTwo, 0, 4096, 50, -50);
 
-    moveRectangles(xJoystickOne, xJoystickTwo, xRectOne, yRectOne, xRectTwo, yRectTwo, &xRectOne, &xRectTwo);
-    collisionDetection(xBall, yBall, xRectOne, yRectOne, xRectTwo, yRectTwo);
-    game = moveBall(xBall, yBall, &xBall, &yBall);
-
-    M5.Lcd.clear(BLACK);
-    M5.Lcd.fillRect(xRectOne, yRectOne, playerBarWidth, playerBarHeight, 30465);
-    M5.Lcd.fillRect(xRectTwo, yRectTwo, playerBarWidth, playerBarHeight, 50000);
-    M5.Lcd.setTextSize(1);
-    M5.Lcd.drawString("Player 1 :", 10, screenMaxY / 2);
-    M5.Lcd.drawString("Player 2 :", screenMaxX - 50, screenMaxY / 2);
-    M5.Lcd.setTextSize(1);
-    M5.Lcd.drawNumber(playerOneScore, 70, screenMaxY / 2);
-    M5.Lcd.drawNumber(playerTwoScore, screenMaxX - 10, screenMaxY / 2);
-    M5.Lcd.drawCircle(xBall, yBall, ballRadius, ballColor);
-
-    M5.Lcd.setCursor(0, 0);
-    delay(25);
+        moveRectangles(xJoystickOne, xJoystickTwo, xRectOne, yRectOne, xRectTwo, yRectTwo, &xRectOne, &xRectTwo);
+        collisionDetection(xBall, yBall, xRectOne, yRectOne, xRectTwo, yRectTwo);
+        game = moveBall(xBall, yBall, &xBall, &yBall);
+        
+        M5.Lcd.clear(BLACK);
+        M5.Lcd.fillRect(xRectOne, yRectOne, playerBarWidth, playerBarHeight, 30465);
+        M5.Lcd.fillRect(xRectTwo, yRectTwo, playerBarWidth, playerBarHeight, 50000);
+        M5.Lcd.setTextSize(1);
+        M5.Lcd.drawString("Player 1 :", 10, screenMaxY / 2);
+        M5.Lcd.drawString("Player 2 :", screenMaxX - 50, screenMaxY / 2);
+        M5.Lcd.setTextSize(1);
+        M5.Lcd.drawNumber(playerOneScore, 70, screenMaxY / 2);
+        M5.Lcd.drawNumber(playerTwoScore, screenMaxX - 10, screenMaxY / 2);
+        M5.Lcd.drawCircle(xBall, yBall, ballRadius, ballColor);
+        t = millis();
+      }
     }
 
     if (playerOneScore >= 5 || playerTwoScore >= 5)
@@ -214,5 +223,7 @@ void loop()
     
     xBall = screenMaxX / 2;
     yBall = screenMaxY / 2;
+
+    ballSpeed = 3;
   }
 }
